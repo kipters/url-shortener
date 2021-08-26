@@ -1,0 +1,17 @@
+version: '3'
+services:
+  devhost:
+    user: vscode
+    build: .
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - DOTNET_NOLOGO=1
+    volumes:
+      - ..:/workspace
+      - ./persistence/nuget:/vscode/nuget
+      - ./persistence/user-secrets:/vscode/.microsoft/usersecrets
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: sleep infinity
+    ports:
+      - 5000:5000
+      - 5001:5001

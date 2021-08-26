@@ -3,3 +3,5 @@
 .devcontainer/persistence
 bin/
 obj/
+mono_crash*
+urls.db

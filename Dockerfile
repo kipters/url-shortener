@@ -5,12 +5,14 @@ FROM --platform=arm64 alpine:${ALPINE_VERSION} AS alpine-sqlite-libs
 RUN apk add sqlite-libs
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-alpine${ALPINE_VERSION} AS build-env
+ARG COMMIT_HASH=dirty
 RUN mkdir -p /app
 COPY ./Directory.Build.props /app
 COPY ./src /app/src
 RUN dotnet publish \
     --configuration Release \
     --output /dist \
+    -p:SourceRevisionId=${COMMIT_HASH} \
     /app/src/UrlShortener
 RUN mv /dist/runtimes /esql
 COPY --from=alpine-sqlite-libs /usr/lib/libsqlite3.so.0 /esql/alpine-arm64/native/libe_sqlite3.so

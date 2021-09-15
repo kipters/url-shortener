@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Web;
 using UrlShortener.ConfigModel;
 using UrlShortener.Services;
@@ -23,6 +25,21 @@ if (builder.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.MapGet("/env", async (HttpContext context, IWebHostEnvironment env) =>
+{
+    var assembly = Assembly.GetExecutingAssembly();
+    var info = new
+    {
+        Version = assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
+            .InformationalVersion,
+        Runtime = Environment.Version.ToString() + "+" + RuntimeInformation.RuntimeIdentifier,
+        OS = RuntimeInformation.OSDescription,
+        Env = env.EnvironmentName,
+    };
+    await context.Response.WriteAsJsonAsync(info);
+});
 
 app.MapFallback(context =>
 {

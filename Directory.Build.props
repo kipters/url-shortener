@@ -6,6 +6,7 @@
         <EnableNETAnalyzers>True</EnableNETAnalyzers>
         <AnalysisLevel>latest</AnalysisLevel>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Version>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</Version>
     </PropertyGroup>
 

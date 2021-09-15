@@ -24,8 +24,6 @@ if (builder.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.MapFallback(context =>
 {
     var path = context.Request.Path.ToString().Substring(1);

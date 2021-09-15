@@ -26,9 +26,10 @@ if (builder.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.MapGet("/env", async (HttpContext context, IWebHostEnvironment env) =>
+app.MapGet("/env", async context =>
 {
     var assembly = Assembly.GetExecutingAssembly();
+    var env = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
     var info = new
     {
         Version = assembly

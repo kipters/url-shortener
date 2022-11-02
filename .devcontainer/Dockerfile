@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim
+FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
@@ -38,8 +38,6 @@ USER ${USERNAME}
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # This is needed for Global Tools to work
 ENV PATH="${PATH}:/home/${USERNAME}/.dotnet/tools"
-# Install .NET Global Tools
-RUN dotnet tool install -g dotnet-format
 
 ENV DEBIAN_FRONTEND=dialog
 

@@ -1,5 +1,5 @@
-ARG DOTNET_VERSION=6.0
-ARG ALPINE_VERSION=3.13
+ARG DOTNET_VERSION=7.0
+ARG ALPINE_VERSION=3.16
 
 FROM --platform=arm64 alpine:${ALPINE_VERSION} AS alpine-sqlite-libs
 RUN apk add sqlite-libs

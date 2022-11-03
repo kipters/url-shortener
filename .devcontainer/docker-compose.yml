@@ -12,6 +12,3 @@ services:
       - ./persistence/user-secrets:/vscode/.microsoft/usersecrets
       - /var/run/docker.sock:/var/run/docker.sock
     command: sleep infinity
-    ports:
-      - 5000:5000
-      - 5001:5001

@@ -12,5 +12,6 @@
         "logerfo.sln-support",
         "ms-vsliveshare.vsliveshare-pack"
     ],
-    "remoteUser": "vscode"
+    "remoteUser": "vscode",
+    "forwardPorts": [ 5000, 5001 ]
 }

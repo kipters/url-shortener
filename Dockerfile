@@ -1,9 +1,6 @@
 ARG DOTNET_VERSION=7.0
 ARG ALPINE_VERSION=3.16
 
-FROM --platform=arm64 alpine:${ALPINE_VERSION} AS alpine-sqlite-libs
-RUN apk add sqlite-libs
-
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-alpine${ALPINE_VERSION} AS build-env
 ARG COMMIT_HASH=dirty
 RUN mkdir -p /app
@@ -14,13 +11,6 @@ RUN dotnet publish \
     --output /dist \
     -p:SourceRevisionId=${COMMIT_HASH} \
     /app/src/UrlShortener
-RUN mv /dist/runtimes /esql
-COPY --from=alpine-sqlite-libs /usr/lib/libsqlite3.so.0 /esql/alpine-arm64/native/libe_sqlite3.so
-RUN rm -rf /dist/runtimes && \
-    mkdir -p /dist/runtimes && \
-    cp -r /esql/alpine-x64 /dist/runtimes && \
-    cp -r /esql/alpine-arm64 /dist/runtimes && \
-    rm /dist/UrlShortener
 
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-alpine AS run-base-arm64
 ENV RID=alpine-arm64
@@ -29,7 +19,7 @@ ENV RID=alpine-x64
 
 FROM --platform=$TARGETPLATFORM run-base-${TARGETARCH}
 COPY --from=build-env /dist /app
-RUN cp /app/runtimes/${RID}/native/libe_sqlite3.so /app/libe_sqlite3.so
+RUN cp /app/runtimes/${RID}/native/libe_sqlite3.so /app/libe_sqlite3.so && rm -rf /app/runtimes
 WORKDIR /app
 
 ENTRYPOINT [ "dotnet", "/app/UrlShortener.dll" ]

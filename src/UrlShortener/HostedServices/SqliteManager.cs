@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using SQLitePCL;
 using UrlShortener.ConfigModel;
+using UrlShortener.Migrations;
 using UrlShortener.Services;
 
 using static SQLitePCL.raw;
@@ -20,14 +21,9 @@ public class SqliteManager : IHostedService, IUrlStore
         _filename = options.Value.FilePath;
         _migrations = new Action<sqlite3>[]
         {
-            BuildInitial
+            BuildInitial.Up,
+            AddCreationTimestamp.Up,
         };
-    }
-
-    private static void BuildInitial(sqlite3 db)
-    {
-        // This one needs to be idempotent for backwards compatibility
-        db.exec("CREATE TABLE IF NOT EXISTS Urls (key TEXT NOT NULL UNIQUE, url TEXT NOT NULL)");
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -51,6 +47,7 @@ public class SqliteManager : IHostedService, IUrlStore
             _logger.LogInformation("Migration to version {newVersion}", newVersion);
         }
 
+        _logger.LogInformation("DB migration complete");
         return Task.CompletedTask;
     }
 
@@ -68,9 +65,10 @@ public class SqliteManager : IHostedService, IUrlStore
     public void StoreUrl(string key, Uri url)
     {
         using var db = open_v2(_filename, SQLITE_OPEN_READWRITE, null);
-        using var stmt = db.prepare("INSERT INTO Urls (key, url) VALUES (?, ?)");
+        using var stmt = db.prepare("INSERT INTO Urls (key, url, created_at) VALUES (?, ?, ?)");
         stmt.bind_text(1, key);
         stmt.bind_text(2, url.ToString());
+        stmt.bind_text(3, DateTime.UtcNow.ToString("O"));
 
         stmt.step_done();
     }

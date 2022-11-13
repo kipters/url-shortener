@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Web;
 using UrlShortener.ConfigModel;
+using UrlShortener.HostedServices;
 using UrlShortener.Services;
 
 SQLitePCL.Batteries_V2.Init();
@@ -12,11 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.Configure<SqliteConfig>(builder.Configuration.GetRequiredSection("Sqlite"));
-builder.Services.AddTransient<IUrlStore, SqliteUrlStore>();
+
+builder.Services
+    .AddSingleton<SqliteManager>()
+    .AddSingleton<IHostedService>(_ => _.GetRequiredService<SqliteManager>())
+    .AddSingleton<IUrlStore>(_ => _.GetRequiredService<SqliteManager>());
 
 var app = builder.Build();
-
-app.Services.GetRequiredService<IUrlStore>().Init();
 
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment())
@@ -40,6 +43,11 @@ app.MapGet("/env", async context =>
         Env = env.EnvironmentName,
     };
     await context.Response.WriteAsJsonAsync(info);
+});
+
+app.MapGet("/stop", (IHostApplicationLifetime lifetime) =>
+{
+    lifetime.StopApplication();
 });
 
 app.MapFallback(context =>

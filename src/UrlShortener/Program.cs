@@ -52,7 +52,7 @@ app.MapGet("/stop", (IHostApplicationLifetime lifetime) =>
 
 app.MapFallback(context =>
 {
-    var path = context.Request.Path.ToString().Substring(1);
+    var path = context.Request.Path.ToString()[1..];
     path = HttpUtility.UrlDecode(path);
     var db = context.RequestServices.GetRequiredService<IUrlStore>();
 

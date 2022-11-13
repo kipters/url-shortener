@@ -40,7 +40,7 @@ public class SqliteManager : IHostedService, IUrlStore
 
         foreach (var migration in _migrations.Skip(latestVersion))
         {
-            var newVersion = latestVersion + 1;;
+            var newVersion = latestVersion + 1;
             _logger.LogInformation("Running migration to version {nextVersion}", newVersion);
             migration(db);
             db.exec("INSERT INTO Migrations (version, date) VALUES (?, ?)", newVersion, DateTime.UtcNow.ToString("O"));

@@ -1,10 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace UrlShortener.ConfigModel
+namespace UrlShortener.ConfigModel;
+
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+public class SqliteConfig
 {
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
-    public class SqliteConfig
-    {
-        public string FilePath { get; set; } = null!;
-    }
+    public string FilePath { get; set; } = null!;
 }

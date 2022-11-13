@@ -1,8 +1,7 @@
-namespace UrlShortener.Services
+namespace UrlShortener.Services;
+
+public interface IUrlStore
 {
-    public interface IUrlStore
-    {
-        void StoreUrl(string key, Uri url);
-        bool TryGetUrl(string key, out Uri? url);
-    }
+    void StoreUrl(string key, Uri url);
+    bool TryGetUrl(string key, out Uri? url);
 }
